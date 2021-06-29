@@ -435,6 +435,9 @@ class Learner:
         self.model_era = self.args['restart_epoch']
         self.model_class = net if net is not None else self.env.net()
         train_model = self.model_class()
+            
+        if self.model_era == -1:
+            self.model_era = self.get_latest_model()
         if self.model_era == 0:
             self.model = RandomModel(self.env)
         else:
@@ -461,6 +464,19 @@ class Learner:
         self.trainer.shutdown()
         self.worker.shutdown()
         self.thread.join()
+
+    def get_latest_model(self):
+        import glob
+        model_paths = glob.glob("./models/*")
+        max_version = 0
+        for model_path in model_paths:
+            model_era = model_path.split("/")[-1].split(".")[0]
+            try:
+                max_version = max(max_version, int(model_era))
+            except Exception as _:
+                pass
+        print("loading latest, version", max_version)
+        return max_version
 
     def model_path(self, model_id):
         return os.path.join('models', str(model_id) + '.pth')

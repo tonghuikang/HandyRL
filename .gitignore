@@ -1,3 +1,6 @@
 .DS_Store
 *.pyc
 *.pth
+
+*.pth.txt
+logs.txt

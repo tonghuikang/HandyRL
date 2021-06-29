@@ -281,7 +281,16 @@ def get_model(env, model_path):
     import torch
     from .model import ModelWrapper
     model = env.net()()
-    model.load_state_dict(torch.load(model_path))
+    state_dict = torch.load(model_path)
+    model.load_state_dict(state_dict)
+
+    import pickle, base64, bz2
+    b64params = base64.b64encode(bz2.compress(pickle.dumps(state_dict)))
+    with open(model_path + ".txt", "wb") as f:
+        f.write(b64params)
+    state_dict = pickle.loads(bz2.decompress(base64.b64decode(b64params)))
+    model.load_state_dict(state_dict)
+
     model.eval()
     return ModelWrapper(model)
 
