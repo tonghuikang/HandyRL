@@ -6,7 +6,7 @@
 
 # wrapper of Hungry Geese environment from kaggle
 
-import random
+import random, math
 import itertools
 
 import numpy as np
@@ -205,7 +205,7 @@ class Environment(BaseEnvironment):
             player = 0
 
         b = np.zeros((self.NUM_AGENTS * 4 + 1, 7 * 11), dtype=np.float32)
-        obs = self.obs_list[-1][player]['observation']
+        obs = self.obs_list[-1][0]['observation']
 
         for p, geese in enumerate(obs['geese']):
             # head position
@@ -215,12 +215,12 @@ class Environment(BaseEnvironment):
             for pos in geese[-1:]:
                 b[4 + (p - player) % self.NUM_AGENTS, pos] = 1
             # whole position
-            for pos in geese:
-                b[8 + (p - player) % self.NUM_AGENTS, pos] = 1
+            for i,pos in enumerate(geese, start=4):
+                b[8 + (p - player) % self.NUM_AGENTS, pos] = 2/math.log(i,2)
 
         # previous head position
         if len(self.obs_list) > 1:
-            obs_prev = self.obs_list[-2][player]['observation']
+            obs_prev = self.obs_list[-2][0]['observation']
             for p, geese in enumerate(obs_prev['geese']):
                 for pos in geese[:1]:
                     b[12 + (p - player) % self.NUM_AGENTS, pos] = 1
@@ -234,6 +234,11 @@ class Environment(BaseEnvironment):
         cx, cy = divmod(obs['geese'][player][0], 11)
         b = np.concatenate([b[:,cx:,:], b[:,:cx,:]], axis=1)
         b = np.concatenate([b[:,:,cy:], b[:,:,:cy]], axis=2)
+
+        # if len(obs['geese'][player]) > 3:
+        #     print(obs['geese'][player])
+        #     print(b[8])
+        #     assert False
 
         return b
 
