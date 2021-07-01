@@ -231,9 +231,9 @@ class Environment(BaseEnvironment):
 
         b = b.reshape(-1, 7, 11)
 
-        cx, cy = divmod(obs['geese'][player][0], 11)
-        b = np.concatenate([b[:,cx:,:], b[:,:cx,:]], axis=1)
-        b = np.concatenate([b[:,:,cy:], b[:,:,:cy]], axis=2)
+        # cx, cy = divmod(obs['geese'][player][0], 11)
+        # b = np.concatenate([b[:,cx:,:], b[:,:cx,:]], axis=1)
+        # b = np.concatenate([b[:,:,cy:], b[:,:,:cy]], axis=2)
 
         # if len(obs['geese'][player]) > 3:
         #     print(obs['geese'][player])
