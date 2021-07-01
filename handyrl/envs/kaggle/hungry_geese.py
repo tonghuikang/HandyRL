@@ -205,7 +205,7 @@ class Environment(BaseEnvironment):
             player = 0
 
         b = np.zeros((self.NUM_AGENTS * 4 + 1, 7 * 11), dtype=np.float32)
-        obs = self.obs_list[-1][0]['observation']
+        obs = self.obs_list[-1][player]['observation']
 
         for p, geese in enumerate(obs['geese']):
             # head position
@@ -220,7 +220,7 @@ class Environment(BaseEnvironment):
 
         # previous head position
         if len(self.obs_list) > 1:
-            obs_prev = self.obs_list[-2][0]['observation']
+            obs_prev = self.obs_list[-2][player]['observation']
             for p, geese in enumerate(obs_prev['geese']):
                 for pos in geese[:1]:
                     b[12 + (p - player) % self.NUM_AGENTS, pos] = 1
