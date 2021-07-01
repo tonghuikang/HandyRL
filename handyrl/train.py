@@ -4,7 +4,7 @@
 # training
 
 import os
-import time
+import time, datetime, pytz
 import copy
 import threading
 import random
@@ -539,6 +539,7 @@ class Learner:
         # call update to every component
         print()
         print('epoch %d' % self.model_epoch)
+        print('time', time.time(), datetime.datetime.now(pytz.timezone('Asia/Singapore')).strftime('%Y-%m-%d_%H-%M-%S'))
 
         if self.model_epoch not in self.results:
             print('win rate = Nan (0)')
