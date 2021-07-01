@@ -23,7 +23,7 @@ from ...environment import BaseEnvironment
 class TorusConv2d(nn.Module):
     def __init__(self, input_dim, output_dim, kernel_size, bn):
         super().__init__()
-        self.conv = nn.Conv2d(input_dim, output_dim, padding="circular", kernel_size=kernel_size)
+        self.conv = nn.Conv2d(input_dim, output_dim, padding_mode="circular", padding=1, kernel_size=kernel_size)
         self.bn = nn.BatchNorm2d(output_dim) if bn else None
 
     def forward(self, h):
@@ -50,7 +50,7 @@ class GeeseNet(nn.Module):
         h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
         p = self.head_p(h_head)
         v = torch.tanh(self.head_v(torch.cat([h_head, h_avg], 1)))
-
+    
         return {'policy': p, 'value': v}
 
 
