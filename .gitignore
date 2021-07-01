@@ -3,4 +3,4 @@
 *.pth
 
 *.pth.txt
-logs.txt
+logs*.txt

@@ -23,13 +23,10 @@ from ...environment import BaseEnvironment
 class TorusConv2d(nn.Module):
     def __init__(self, input_dim, output_dim, kernel_size, bn):
         super().__init__()
-        self.edge_size = (kernel_size[0] // 2, kernel_size[1] // 2)
-        self.conv = nn.Conv2d(input_dim, output_dim, kernel_size=kernel_size)
+        self.conv = nn.Conv2d(input_dim, output_dim, padding="circular", kernel_size=kernel_size)
         self.bn = nn.BatchNorm2d(output_dim) if bn else None
 
-    def forward(self, x):
-        h = torch.cat([x[:,:,:,-self.edge_size[1]:], x, x[:,:,:,:self.edge_size[1]]], dim=3)
-        h = torch.cat([h[:,:,-self.edge_size[0]:], h, h[:,:,:self.edge_size[0]]], dim=2)
+    def forward(self, h):
         h = self.conv(h)
         h = self.bn(h) if self.bn is not None else h
         return h

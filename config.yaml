@@ -26,12 +26,12 @@ train_args:
     policy_target: 'TD' # 'UPGO' 'VTRACE' 'TD' 'MC'
     value_target: 'TD' # 'VTRACE' 'TD' 'MC'
     eval:
-        opponent: ['rulebase']
+        opponent: ['rulebase', 'random']
     seed: 0
     restart_epoch: -1
 
 
 worker_args:
     server_address: ''  # THIS IS THE INTERNAL IP ADDRESS
-    num_parallel: 120
+    num_parallel: 64
 
