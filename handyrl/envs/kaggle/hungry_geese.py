@@ -17,7 +17,7 @@ import torch.nn.functional as F
 # You need to install kaggle_environments, requests
 from kaggle_environments import make
 from .submissions import boilergoose, crazy_goose, greedy, risk_adverse_greedy
-from .submissions import simple_bfs, simple_toward, straightforward_bfs
+from .submissions import pubhrl, simple_bfs, simple_toward, straightforward_bfs
 
 from ...environment import BaseEnvironment
 
@@ -233,6 +233,15 @@ class Environment(BaseEnvironment):
         from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
         obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
         action = risk_adverse_greedy.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
+        return self.ACTION.index(action)
+
+    def agent_pubhrl(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = pubhrl.agent(
             Observation(obs), 
             {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
         )

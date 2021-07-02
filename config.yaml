@@ -32,8 +32,9 @@ train_args:
             - AgentBoilergoose
             - AgentCrazyGoose
             # - AgentGreedy
-            - AgentRiskAdverseGreedy
-            # - AgentSimpleBFS
+            # - AgentRiskAdverseGreedy
+            - AgentPubHRL
+            - AgentSimpleBFS
             # - AgentSimpleToward
             - AgentStraightforwardBFS
     seed: 0

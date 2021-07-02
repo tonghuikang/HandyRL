@@ -66,6 +66,15 @@ class AgentRiskAdverseGreedy(RandomAgent):
             return random.choice(env.legal_actions(player))
 
 
+class AgentPubHRL(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_pubhrl'):
+            return env.agent_pubhrl(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
 class AgentSimpleBFS(RandomAgent):
     def action(self, env, player, show=False):
         if hasattr(env, 'agent_simple_bfs'):
