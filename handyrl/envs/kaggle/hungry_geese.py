@@ -17,7 +17,8 @@ import torch.nn.functional as F
 # You need to install kaggle_environments, requests
 from kaggle_environments import make
 from .submissions import boilergoose, crazy_goose, greedy, risk_adverse_greedy
-from .submissions import pubhrl, simple_bfs, simple_toward, straightforward_bfs
+from .submissions import simple_bfs, simple_toward, straightforward_bfs
+from .submissions import pubhrl_latest as pubhrl
 
 from ...environment import BaseEnvironment
 
