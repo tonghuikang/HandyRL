@@ -21,9 +21,9 @@ from ...environment import BaseEnvironment
 
 
 class TorusConv2d(nn.Module):
-    def __init__(self, input_dim, output_dim, kernel_size, bn, padding_mode="circular", stride=1):
+    def __init__(self, input_dim, output_dim, kernel_size, bn):
         super().__init__()
-        self.conv = nn.Conv2d(input_dim, output_dim, padding_mode=padding_mode, padding=1, kernel_size=kernel_size, stride=stride)
+        self.conv = nn.Conv2d(input_dim, output_dim, padding_mode="circular", padding=1, kernel_size=kernel_size)
         self.bn = nn.BatchNorm2d(output_dim) if bn else None
 
     def forward(self, h):
@@ -35,41 +35,18 @@ class TorusConv2d(nn.Module):
 class GeeseNet(nn.Module):
     def __init__(self):
         super().__init__()
-        f1, f2, f3, f4 = 16, 24, 32, 40
+        layers, filters = 12, 32
 
-        self.conv0 = TorusConv2d(5, f1, (3, 3), True)
-
-        self.blocks_conv1 = nn.ModuleList([TorusConv2d(f1, f1, (3, 3), True, padding_mode="circular") for _ in range(2)])
-        self.down1 = TorusConv2d(f1, f2, (3, 3), True, padding_mode="circular", stride=2)
-        self.down1a = nn.Conv2d(f1, f2, kernel_size=1, stride=2, bias=False)
-
-        self.blocks_conv2 = nn.ModuleList([TorusConv2d(f2, f2, (3, 3), True, padding_mode="circular") for _ in range(2)])
-        self.down2 = TorusConv2d(f2, f3, (3, 3), True, padding_mode="circular", stride=2)
-        self.down2a = nn.Conv2d(f2, f3, kernel_size=1, stride=2, bias=False)
-
-        self.blocks_conv3 = nn.ModuleList([TorusConv2d(f3, f3, (3, 3), True, padding_mode="circular") for _ in range(2)])
-        self.down3 = TorusConv2d(f3, f4, (3, 3), True, padding_mode="circular", stride=2)
-        self.down3a = nn.Conv2d(f3, f4, kernel_size=1, stride=2, bias=False)
-
-        self.head_p = nn.Linear(f3, 4, bias=False)
-        self.head_v = nn.Linear(f3 * 2, 1, bias=False)
-
+        self.conv0 = TorusConv2d(17, filters, (3, 3), True)
+        self.blocks = nn.ModuleList([TorusConv2d(filters, filters, (3, 3), True) for _ in range(layers)])
+        self.head_p = nn.Linear(filters, 4, bias=False)
+        self.head_v = nn.Linear(filters * 2, 1, bias=False)
 
     def forward(self, x, _=None):
         h = F.relu_(self.conv0(x))
-
-        for block in self.blocks_conv1:
+        for block in self.blocks:
             h = F.relu_(h + block(h))
-        h = F.relu_(self.down1a(h) + self.down1(h))
-
-        for block in self.blocks_conv2:
-            h = F.relu_(h + block(h))
-        h = F.relu_(self.down2a(h) + self.down2(h))
-
-        for block in self.blocks_conv3:
-            h = F.relu_(h + block(h))
-
-        h_head = h[:,:,0,0]
+        h_head = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
         h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
         p = self.head_p(h_head)
         v = torch.tanh(self.head_v(torch.cat([h_head, h_avg], 1)))
@@ -227,37 +204,41 @@ class Environment(BaseEnvironment):
         if player is None:
             player = 0
 
-        b = np.zeros((self.NUM_AGENTS+1, 7 * 11), dtype=np.float32)
+        b = np.zeros((self.NUM_AGENTS * 4 + 1, 7 * 11), dtype=np.float32)
         obs = self.obs_list[-1][0]['observation']
 
         for p, geese in enumerate(obs['geese']):
             # head position
             for pos in geese[:1]:
-                b[0 + (p - player) % self.NUM_AGENTS, pos] -= 1
+                b[0 + (p - player) % self.NUM_AGENTS, pos] = 1
+            # tip position
+            for i,pos in enumerate(geese[::-1], start=2):
+                b[4 + (p - player) % self.NUM_AGENTS, pos] = 1/math.log(i,2)
             # whole position
-            for i,pos in enumerate(geese[::-1], start=4):
-                b[0 + (p - player) % self.NUM_AGENTS, pos] += 2/math.log(i,2)
+            for pos in geese:
+                b[8 + (p - player) % self.NUM_AGENTS, pos] = 1
 
         # previous head position
         if len(self.obs_list) > 1:
             obs_prev = self.obs_list[-2][0]['observation']
-            for pos in obs_prev['geese'][player][:1]:
-                b[0, pos] -= 2
+            for p, geese in enumerate(obs_prev['geese']):
+                for pos in geese[:1]:
+                    b[12 + (p - player) % self.NUM_AGENTS, pos] = 1
 
         # food
         for pos in obs['food']:
-            b[4, pos] = 1
+            b[16, pos] = 1
 
         b = b.reshape(-1, 7, 11)
 
         cx, cy = divmod(obs['geese'][player][0], 11)
-        b = np.roll(b, (-cx,-cy), axis=(1,2))
+        b = np.concatenate([b[:,cx:,:], b[:,:cx,:]], axis=1)
+        b = np.concatenate([b[:,:,cy:], b[:,:,:cy]], axis=2)
 
         # if len(obs['geese'][player]) > 3:
         #     print(obs['geese'][player])
         #     print(np.round(b[4], 2))
-        #     print(np.round(b[0], 2))
-        #     assert False
+        #     print(np.round(b[12], 2))
 
         return b
 
