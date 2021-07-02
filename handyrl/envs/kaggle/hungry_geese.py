@@ -6,7 +6,7 @@
 
 # wrapper of Hungry Geese environment from kaggle
 
-import random, math
+import random
 import itertools
 
 import numpy as np
@@ -23,10 +23,13 @@ from ...environment import BaseEnvironment
 class TorusConv2d(nn.Module):
     def __init__(self, input_dim, output_dim, kernel_size, bn):
         super().__init__()
-        self.conv = nn.Conv2d(input_dim, output_dim, padding_mode="circular", padding=1, kernel_size=kernel_size)
+        self.edge_size = (kernel_size[0] // 2, kernel_size[1] // 2)
+        self.conv = nn.Conv2d(input_dim, output_dim, kernel_size=kernel_size)
         self.bn = nn.BatchNorm2d(output_dim) if bn else None
 
-    def forward(self, h):
+    def forward(self, x):
+        h = torch.cat([x[:,:,:,-self.edge_size[1]:], x, x[:,:,:,:self.edge_size[1]]], dim=3)
+        h = torch.cat([h[:,:,-self.edge_size[0]:], h, h[:,:,:self.edge_size[0]]], dim=2)
         h = self.conv(h)
         h = self.bn(h) if self.bn is not None else h
         return h
@@ -35,7 +38,7 @@ class TorusConv2d(nn.Module):
 class GeeseNet(nn.Module):
     def __init__(self):
         super().__init__()
-        layers, filters = 6, 32
+        layers, filters = 12, 32
 
         self.conv0 = TorusConv2d(17, filters, (3, 3), True)
         self.blocks = nn.ModuleList([TorusConv2d(filters, filters, (3, 3), True) for _ in range(layers)])
@@ -50,7 +53,7 @@ class GeeseNet(nn.Module):
         h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
         p = self.head_p(h_head)
         v = torch.tanh(self.head_v(torch.cat([h_head, h_avg], 1)))
-    
+
         return {'policy': p, 'value': v}
 
 
@@ -212,8 +215,8 @@ class Environment(BaseEnvironment):
             for pos in geese[:1]:
                 b[0 + (p - player) % self.NUM_AGENTS, pos] = 1
             # tip position
-            for i,pos in enumerate(geese[::-1], start=2):
-                b[4 + (p - player) % self.NUM_AGENTS, pos] = 1/math.log(i,2)
+            for pos in geese[-1:]:
+                b[4 + (p - player) % self.NUM_AGENTS, pos] = 1
             # whole position
             for pos in geese:
                 b[8 + (p - player) % self.NUM_AGENTS, pos] = 1
@@ -229,18 +232,7 @@ class Environment(BaseEnvironment):
         for pos in obs['food']:
             b[16, pos] = 1
 
-        b = b.reshape(-1, 7, 11)
-
-        cx, cy = divmod(obs['geese'][player][0], 11)
-        b = np.concatenate([b[:,cx:,:], b[:,:cx,:]], axis=1)
-        b = np.concatenate([b[:,:,cy:], b[:,:,:cy]], axis=2)
-
-        # if len(obs['geese'][player]) > 3:
-        #     print(obs['geese'][player])
-        #     print(np.round(b[4], 2))
-        #     print(np.round(b[12], 2))
-
-        return b
+        return b.reshape(-1, 7, 11)
 
 
 if __name__ == '__main__':
