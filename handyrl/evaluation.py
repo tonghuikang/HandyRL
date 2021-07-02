@@ -11,7 +11,8 @@ from .environment import prepare_env, make_env
 from .connection import send_recv, accept_socket_connections, connect_socket_connection
 from .agent import RandomAgent, RuleBasedAgent, Agent, EnsembleAgent, SoftAgent
 from .agent import AgentGreedy, AgentCrazyGoose, AgentRiskAdverseGreedy, AgentSimpleBFS
-from .agent import AgentPubHRL, AgentSimpleToward, AgentStraightforwardBFS, AgentBoilergoose
+from .agent import AgentSimpleToward, AgentStraightforwardBFS, AgentBoilergoose
+from .agent import AgentPubHRL, AgentPubHRLLatest
 
 network_match_port = 9876
 
@@ -151,6 +152,8 @@ def build_agent(raw, env):
         return AgentRiskAdverseGreedy()
     elif raw == 'AgentPubHRL':
         return AgentPubHRL()
+    elif raw == 'AgentPubHRLLatest':
+        return AgentPubHRLLatest()
     elif raw == 'AgentSimpleBFS':
         return AgentSimpleToward()
     elif raw == 'AgentSimpleToward':

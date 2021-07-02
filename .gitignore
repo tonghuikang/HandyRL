@@ -1,6 +1,9 @@
 .DS_Store
 *.pyc
 *.pth
+*.tar
 
 *.pth.txt
 logs*.txt
+
+!models-pubhrl/00_shared.pth

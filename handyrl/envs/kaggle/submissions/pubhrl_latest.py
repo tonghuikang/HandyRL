@@ -89,7 +89,7 @@ def make_input(obses):
 
 import glob, random, os
 
-model_paths_pattern = "/home/jupyter/project/HandyRL/models/*.pth"
+model_paths_pattern = "/home/jupyter/project/HandyRL/models-pubhrl/*.pth"
 model_paths = list(glob.glob(model_paths_pattern))
 model_paths.sort(key=lambda x: x.split("/")[-1].split(".")[0].zfill(10))
 model_path = random.choice(model_paths[::-1][:1000])

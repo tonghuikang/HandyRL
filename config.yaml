@@ -15,7 +15,7 @@ train_args:
     entropy_regularization_decay: 0.3
     update_episodes: 500
     batch_size: 400
-    minimum_episodes: 10000
+    minimum_episodes: 100
     maximum_episodes: 500000
     epochs: -1
     num_batchers: 7
@@ -28,20 +28,21 @@ train_args:
     eval:
         opponent:
             # - random
-            - rulebase
-            - AgentBoilergoose
-            - AgentCrazyGoose
+            # - rulebase  #
+            - AgentBoilergoose  #
+            - AgentCrazyGoose  #
             # - AgentGreedy
             # - AgentRiskAdverseGreedy
-            - AgentPubHRL
-            - AgentSimpleBFS
+            - AgentPubHRL  #
+            - AgentPubHRLLatest
+            # - AgentSimpleBFS
             # - AgentSimpleToward
-            - AgentStraightforwardBFS
+            - AgentStraightforwardBFS  #
     seed: 0
     restart_epoch: -1
 
 
 worker_args:
-    server_address: ''  # THIS IS THE INTERNAL IP ADDRESS
-    num_parallel: 64
+    server_address: '10.140.0.19'  # THIS IS THE INTERNAL IP ADDRESS
+    num_parallel: 12
 

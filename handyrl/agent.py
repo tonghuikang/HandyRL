@@ -75,6 +75,15 @@ class AgentPubHRL(RandomAgent):
             return random.choice(env.legal_actions(player))
 
 
+class AgentPubHRLLatest(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_pubhrl_latest'):
+            return env.agent_pubhrl_latest(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
 class AgentSimpleBFS(RandomAgent):
     def action(self, env, player, show=False):
         if hasattr(env, 'agent_simple_bfs'):
