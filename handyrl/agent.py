@@ -30,6 +30,24 @@ class RuleBasedAgent(RandomAgent):
             return random.choice(env.legal_actions(player))
 
 
+class AgentBoilergoose(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_boilergoose'):
+            return env.agent_boilergoose(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
+class AgentCrazyGoose(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_crazy_goose'):
+            return env.agent_crazy_goose(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
 class AgentGreedy(RandomAgent):
     def action(self, env, player, show=False):
         if hasattr(env, 'agent_greedy'):

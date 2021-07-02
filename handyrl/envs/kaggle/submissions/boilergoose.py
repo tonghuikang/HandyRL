@@ -316,7 +316,7 @@ class FloodGoose(BaseAgent):
         return result
     
 
-agent = FloodGoose(min_length=8)
+agent_instance = FloodGoose(min_length=8)
 
-def call_agent(obs, conf):
-    return agent(obs, conf)
+def agent(obs, conf):
+    return agent_instance(obs, conf)

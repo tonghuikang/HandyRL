@@ -38,7 +38,10 @@ last_size = 1
 step = 0
 
 # Returns a list of possible destinations in order to reach `dest_cell`
-def move_towards (head_cell, neck_cell, dest_cell, configuration):
+def move_towards(head_cell, neck_cell, dest_cell, configuration, debug=False):
+    if not debug:
+        def print(*args):
+            return
     print ("--- Computing food movements...")
     destinations = []
     x_head, y_head = row_col(head_cell, configuration.columns)
@@ -123,7 +126,10 @@ def is_safe (movement, board):
 def is_half_safe (movement, board):
     return board[movement[0], movement[1]] >= -1
 
-def agent (obs_dict, config_dict):
+def agent(obs_dict, config_dict, debug=False):
+    if not debug:
+        def print(*args):
+            return
     global last_move
     global last_eaten
     global last_size
