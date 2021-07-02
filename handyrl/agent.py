@@ -30,6 +30,51 @@ class RuleBasedAgent(RandomAgent):
             return random.choice(env.legal_actions(player))
 
 
+class AgentGreedy(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_greedy'):
+            return env.agent_greedy(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
+class AgentRiskAdverseGreedy(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_risk_adverse_greedy'):
+            return env.agent_risk_adverse_greedy(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
+class AgentSimpleBFS(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_simple_bfs'):
+            return env.agent_simple_bfs(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
+class AgentSimpleToward(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_simple_toward'):
+            return env.agent_simple_toward(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
+class AgentStraightforwardBFS(RandomAgent):
+    def action(self, env, player, show=False):
+        if hasattr(env, 'agent_straightforward_bfs'):
+            return env.agent_straightforward_bfs(player)
+        else:
+            assert False
+            return random.choice(env.legal_actions(player))
+
+
 def print_outputs(env, prob, v):
     if hasattr(env, 'print_outputs'):
         env.print_outputs(prob, v)

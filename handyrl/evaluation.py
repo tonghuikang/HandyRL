@@ -10,6 +10,7 @@ import multiprocessing as mp
 from .environment import prepare_env, make_env
 from .connection import send_recv, accept_socket_connections, connect_socket_connection
 from .agent import RandomAgent, RuleBasedAgent, Agent, EnsembleAgent, SoftAgent
+from .agent import AgentGreedy, AgentRiskAdverseGreedy, AgentSimpleBFS, AgentSimpleToward, AgentStraightforwardBFS
 
 
 network_match_port = 9876
@@ -140,6 +141,16 @@ def build_agent(raw, env):
         return RandomAgent()
     elif raw == 'rulebase':
         return RuleBasedAgent()
+    elif raw == 'AgentGreedy':
+        return AgentGreedy()
+    elif raw == 'AgentRiskAdverseGreedy':
+        return AgentRiskAdverseGreedy()
+    elif raw == 'AgentSimpleBFS':
+        return AgentSimpleToward()
+    elif raw == 'AgentSimpleToward':
+        return AgentSimpleToward()
+    elif raw == 'AgentStraightforwardBFS':
+        return AgentStraightforwardBFS()
     return None
 
 

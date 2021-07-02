@@ -16,6 +16,7 @@ import torch.nn.functional as F
 
 # You need to install kaggle_environments, requests
 from kaggle_environments import make
+from .submissions import greedy, risk_adverse_greedy, simple_bfs, simple_toward, straightforward_bfs
 
 from ...environment import BaseEnvironment
 
@@ -198,6 +199,51 @@ class Environment(BaseEnvironment):
         agent.last_action = action_map[self.ACTION[self.last_actions[player]][0]] if player in self.last_actions else None
         obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
         action = agent(Observation(obs))
+        return self.ACTION.index(action)
+
+    def agent_greedy(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = greedy.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
+        return self.ACTION.index(action)
+
+    def agent_risk_adverse_greedy(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = risk_adverse_greedy.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
+        return self.ACTION.index(action)
+
+    def agent_simple_bfs(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = simple_bfs.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
+        return self.ACTION.index(action)
+
+    def agent_simple_toward(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = simple_toward.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
+        return self.ACTION.index(action)
+
+    def agent_straightforward_bfs(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = straightforward_bfs.agent(
+            Observation(obs), 
+            {'episodeSteps': 200, 'actTimeout': 6, 'runTimeout': 1200, 'columns': 11, 'rows': 7, 'hunger_rate': 40, 'min_food': 2}
+        )
         return self.ACTION.index(action)
 
     def net(self):
