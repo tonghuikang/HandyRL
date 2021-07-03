@@ -18,7 +18,8 @@ import torch.nn.functional as F
 from kaggle_environments import make
 from .submissions import boilergoose, crazy_goose, greedy, risk_adverse_greedy
 from .submissions import simple_bfs, simple_toward, straightforward_bfs
-from .submissions import pubhrl, pubhrl_latest
+from .submissions import pubhrl
+from .submissions import pubhrl as pubhrl_latest  # no self-training for now
 
 from ...environment import BaseEnvironment
 
