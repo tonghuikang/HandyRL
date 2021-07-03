@@ -43,6 +43,6 @@ train_args:
 
 
 worker_args:
-    server_address: '10.140.0.19'  # THIS IS THE INTERNAL IP ADDRESS
+    server_address: '10.140.0.3'  # THIS IS THE INTERNAL IP ADDRESS
     num_parallel: 64
 
