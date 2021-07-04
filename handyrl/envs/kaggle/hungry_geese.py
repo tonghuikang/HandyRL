@@ -306,10 +306,10 @@ class Environment(BaseEnvironment):
             for pos in geese:
                 b[8 + (p - player) % self.NUM_AGENTS, pos] = 1
 
-        if obs["step"]%40 == 39:
-            for p, geese in enumerate(obs['geese']):
-                for pos in geese[::-1][:2]:
-                    b[4 + (p - player) % self.NUM_AGENTS, pos] = 1
+        # if obs["step"]%40 == 39:
+        #     for p, geese in enumerate(obs['geese']):
+        #         for pos in geese[::-1][:2]:
+        #             b[4 + (p - player) % self.NUM_AGENTS, pos] = 1
 
         # previous head position
         if len(self.obs_list) > 1:
