@@ -45,18 +45,29 @@ class GeeseNet(nn.Module):
         layers, filters = 12, 32
 
         self.conv0 = TorusConv2d(17, filters, (3, 3), True)
-        self.blocks = nn.ModuleList([TorusConv2d(filters, filters, (3, 3), True) for _ in range(layers)])
-        self.head_p = nn.Linear(filters, 4, bias=False)
-        self.head_v = nn.Linear(filters * 2, 1, bias=False)
+        self.blocks1 = nn.ModuleList([TorusConv2d(filters, filters, (3, 3), True) for _ in range(layers//2)])
+        self.blocks2 = nn.ModuleList([TorusConv2d(filters, filters, (3, 3), True) for _ in range(layers//2)])
+        self.head_p = nn.Linear(filters * 2 + 17, 4, bias=False)
+        self.head_v = nn.Linear(filters * 4 + 17, 1, bias=False)
 
     def forward(self, x, _=None):
+        h_avg0 = x.view(x.size(0), x.size(1), -1).mean(-1)
         h = F.relu_(self.conv0(x))
-        for block in self.blocks:
+
+        for block in self.blocks1:
             h = F.relu_(h + block(h))
-        h_head = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
-        h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
-        p = self.head_p(h_head)
-        v = torch.tanh(self.head_v(torch.cat([h_head, h_avg], 1)))
+
+        h_head1 = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
+        h_avg1 = h.view(h.size(0), h.size(1), -1).mean(-1)
+
+        for block in self.blocks2:
+            h = F.relu_(h + block(h))
+
+        h_head2 = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
+        h_avg2 = h.view(h.size(0), h.size(1), -1).mean(-1)
+
+        p = self.head_p(torch.cat([h_head1, h_head2, h_avg0], 1))
+        v = torch.tanh(self.head_v(torch.cat([h_head1, h_head2, h_avg1, h_avg2, h_avg0], 1)))
 
         return {'policy': p, 'value': v}
 

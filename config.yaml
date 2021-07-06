@@ -30,14 +30,14 @@ train_args:
             # - random
             # - rulebase  #
             - AgentBoilergoose  #
-            - AgentCrazyGoose  #
+            # - AgentCrazyGoose  #
             # - AgentGreedy
-            # - AgentRiskAdverseGreedy
+            - AgentRiskAdverseGreedy #
             # - AgentPubHRL  #
             # - AgentPubHRLLatest
             # - AgentSimpleBFS
             # - AgentSimpleToward
-            - AgentStraightforwardBFS  #
+            # - AgentStraightforwardBFS  #
     seed: 0
     restart_epoch: -1
 
