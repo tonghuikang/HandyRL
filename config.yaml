@@ -9,13 +9,13 @@ train_args:
     turn_based_training: False
     observation: False
     gamma: 0.8
-    forward_steps: 16
+    forward_steps: 32
     compress_steps: 1
     entropy_regularization: 2.0e-3
     entropy_regularization_decay: 0.3
     update_episodes: 500
     batch_size: 400
-    minimum_episodes: 10000
+    minimum_episodes: 500000
     maximum_episodes: 500000
     epochs: -1
     num_batchers: 7
@@ -29,11 +29,11 @@ train_args:
         opponent:
             # - random
             # - rulebase  #
-            - AgentBoilergoose  #
+            # - AgentBoilergoose  #
             # - AgentCrazyGoose  #
             # - AgentGreedy
-            - AgentRiskAdverseGreedy #
-            # - AgentPubHRL  #
+            # - AgentRiskAdverseGreedy #
+            - AgentPubHRL  #
             # - AgentPubHRLLatest
             # - AgentSimpleBFS
             # - AgentSimpleToward
@@ -43,6 +43,6 @@ train_args:
 
 
 worker_args:
-    server_address: '10.140.0.3'  # THIS IS THE INTERNAL IP ADDRESS
+    server_address: '10.140.0.23'  # THIS IS THE INTERNAL IP ADDRESS
     num_parallel: 64
 
